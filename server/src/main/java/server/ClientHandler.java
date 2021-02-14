@@ -25,7 +25,7 @@ public class ClientHandler {
 
             new Thread(() -> {
                 try {
-
+                    socket.setSoTimeout(120000);
                     //цикл аутентификации
                     while (true) {
                         String str = in.readUTF();
@@ -68,6 +68,7 @@ public class ClientHandler {
                             }
                         }
                     }
+                    socket.setSoTimeout(0);
 
                     //цикл работы
                     while (true) {
@@ -91,6 +92,9 @@ public class ClientHandler {
                             server.broadcastMsg(this, str);
                         }
                     }
+                } catch (SocketTimeoutException e) {
+                    System.out.println("Истекло время ожидания");
+                    sendMsg(Command.END);
                 } catch (RuntimeException e) {
                     System.out.println(e.getMessage());
                 } catch (IOException e) {
